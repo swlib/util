@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright: Swooler
+ * Copyright: Swlib
  * Author: Twosee <twose@qq.com>
  * Date: 2018/3/24 上午1:02
  */
 
-namespace Swooler\Util;
+namespace Swlib\Util;
 
 trait InterceptorTrait
 {

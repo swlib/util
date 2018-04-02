@@ -1,13 +1,13 @@
 {
-  "name": "swooler/util",
+  "name": "swlib/util",
   "type": "library",
   "keywords": [
     "php",
     "swoole",
-    "swooler",
+    "swlib",
     "util"
   ],
-  "description": "Swooler Toolkit",
+  "description": "Swlib Toolkit",
   "license": "Apache-2.0",
   "authors": [
     {
@@ -20,7 +20,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Swooler\\Util\\": "src"
+      "Swlib\\Util\\": "src"
     }
   },
   "repositories": [
