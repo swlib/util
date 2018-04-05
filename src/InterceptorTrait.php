@@ -28,15 +28,15 @@ trait InterceptorTrait
      * Add a function to the interceptor
      *
      * @param string $name
-     * @param callable $function
+     * @param callable|array $functions
      * @return self|$this
      */
-    public function withAddedInterceptor(string $name, callable $function): self
+    public function withAddedInterceptor(string $name, array $functions): self
     {
         if (!isset($this->interceptors[$name])) {
             $this->interceptors[$name] = [];
         }
-        $this->interceptors[$name][] = $function;
+        $this->interceptors[$name] = array_merge($this->interceptors[$name], $functions);
 
         return $this;
     }
