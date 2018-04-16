@@ -1,0 +1,153 @@
+<?php
+/**
+ * Copyright: Swlib
+ * Author: Twosee <twose@qq.com>
+ * Date: 2018/4/15 下午3:25
+ */
+
+namespace Swlib\Util;
+
+use SimpleXMLElement;
+use DOMDocument;
+
+/**
+ * @method static array toJsonArray(string $var)
+ * @method static object toJsonObject(string $var)
+ * @method static string toJsonString(array|object $var)
+ * @method static array toQueryArray(string $var)
+ * @method static string toQueryString(array $var)
+ * @method static SimpleXMLElement toXmlObject(string|array $var)
+ * @method static string toXmlString(array $var)
+ * @method static DOMDocument toHtmlObject(string $var)
+ */
+class DataParser
+{
+    public static function getCallableMap(): array
+    {
+        static $callMap;
+        if (!isset($callMap)) {
+            $reflection = new \ReflectionClass(self::class);
+            $methods = $reflection->getMethods(\ReflectionMethod::IS_STATIC);
+            foreach ($methods as $method) {
+                if (preg_match('/([a-z]+)To([A-Z][a-z]+)([A-Z][a-z]+)/', $methodName = $method->getName(), $matches)) {
+                    $targetFormat = $matches[2];
+                    $targetType = $matches[3];
+                    $fromType = $matches[1];
+                    $subName = '\\' . self::class . '::' . $methodName;
+                    $sub = new \ReflectionMethod($subName);
+                    $subReturnType = $sub->getReturnType();
+                    $callName = 'to' . $targetFormat . $targetType;
+                    $callMap[$callName]['supports'][$fromType] = $subName;
+                    $callMap[$callName]['returnTypes'][] = $subReturnType;
+                }
+            }
+        }
+
+        return $callMap;
+    }
+
+    public static function createComment(): string
+    {
+        $comments = "/**\n";
+        foreach (self::getCallableMap() as $method => $callInfo) {
+            $types = implode('|', array_keys($callInfo['supports']));
+            $retTypes = implode('|', array_unique($callInfo['returnTypes']));
+            $comments .= " * @method static {$retTypes} {$method}({$types} \$var)\n";
+        }
+        $comments .= '*/';
+
+        return $comments;
+    }
+
+    public static function __callStatic($name, $arguments)
+    {
+        $var = $arguments[0] ?? null;
+        if ($var === null) {
+            throw new \InvalidArgumentException("Argument can't be null!");
+        } else {
+            $callMap = self::getCallableMap();
+            if (TypeDetector::canBeArray($var) && isset($callMap[$name]['supports']['array'])) {
+                return call_user_func($callMap[$name]['supports']['array'], $var);
+            } elseif (TypeDetector::canBeString($var) && isset($callMap[$name]['supports']['string'])) {
+                return call_user_func($callMap[$name]['supports']['array'], $var);
+            } elseif (is_object($var) && isset($callMap[$name]['supports']['object'])) {
+                return call_user_func($callMap[$name]['supports']['object'], $var);
+            }
+        }
+
+        throw new \InvalidArgumentException(
+            'Not implement for ' . (is_object($var) ? get_class($var) : gettype($var)) . " $name"
+        );
+    }
+
+    public static function stringToJsonArray(string $var): array
+    {
+        return ($var = json_decode($var, true)) === false ? [] : $var;
+    }
+
+    public static function stringToJsonObject(string $var): object
+    {
+        return ($var = json_decode($var)) === false ? (object)[] : (object)$var;
+    }
+
+    public static function arrayToJsonString(array $var): string
+    {
+        return ($var = json_encode($var)) === false ? '{}' : $var;
+    }
+
+    public static function objectToJsonString(array $var): string
+    {
+        return ($var = json_encode($var)) === false ? '{}' : $var;
+    }
+
+    public static function stringToQueryArray(string $var): array
+    {
+        parse_str($var, $ret);
+
+        return $ret;
+    }
+
+    public static function arrayToQueryString(array $var): string
+    {
+        return http_build_query($var);
+    }
+
+    public static function stringToXmlObject(string $var): SimpleXMLElement
+    {
+        return new SimpleXMLElement($var);
+    }
+
+    public static function arrayToXmlString(array $var): string
+    {
+        return self::arrayToXmlObject($var)->asXML();
+    }
+
+    public static function arrayToXmlObject(array $var, ?SimpleXMLElement &$xml = null): SimpleXMLElement
+    {
+        if ($xml === null) {
+            $xml = new SimpleXMLElement('<?xml version="1.0"?><root></root>');
+        }
+        foreach ($var as $key => $value) {
+            if (is_numeric($key)) {
+                $key = 'item' . $key; //dealing with <0/>..<n/> issues
+            }
+            if (is_array($value)) {
+                $sub_node = $xml->addChild($key);
+                self::arrayToXmlObject($value, $sub_node);
+            } else {
+                $xml->addChild("$key", htmlspecialchars("$value"));
+            }
+        }
+
+        return $xml;
+    }
+
+    public static function stringToHtmlObject(string $var): DOMDocument
+    {
+        $html = new DOMDocument($var);
+        $html->loadHTML($var);
+
+        return $html;
+    }
+
+}
