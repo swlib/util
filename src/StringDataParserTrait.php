@@ -13,6 +13,7 @@ trait StringDataParserTrait
     private $stringDataIsWaitingToBeParsed;
     private $stringDataHasParsed = [];
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function __stringDataParserInitialization(&$data)
     {
         if (isset($data)) {
