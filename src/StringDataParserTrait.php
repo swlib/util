@@ -58,6 +58,25 @@ trait StringDataParserTrait
         }
     }
 
+    public function getParsedXmlArray(bool $reParse = false): array
+    {
+        if (isset($this->stringDataHasParsed['xml']) && !$reParse) {
+            return $this->stringDataHasParsed['xml'];
+        } else {
+            return $this->stringDataHasParsed['xml'] =
+                json_decode(
+                    json_encode(
+                        simplexml_load_string(
+                            $this->stringDataIsWaitingToBeParsed,
+                            "SimpleXMLElement",
+                            LIBXML_NOCDATA
+                        )
+                    ),
+                    true
+                );
+        }
+    }
+
     public function getParsedXmlObject(bool $reParse = false): \SimpleXMLElement
     {
         if (isset($this->stringDataHasParsed['xml']) && !$reParse) {
@@ -68,14 +87,53 @@ trait StringDataParserTrait
         }
     }
 
-    public function getParsedHtmlObject(bool $reParse = false): \DOMDocument
+    public function getParsedDomObject(bool $reParse = false): \DOMDocument
     {
         if (isset($this->stringDataHasParsed['html']) && !$reParse) {
             return $this->stringDataHasParsed['html'];
         } else {
             return $this->stringDataHasParsed['html'] =
-                DataParser::stringToHtmlObject($this->stringDataIsWaitingToBeParsed);
+                DataParser::stringToDomObject($this->stringDataIsWaitingToBeParsed);
         }
+    }
+
+    /**
+     * @param string $regex
+     * @param int|string $group
+     * @param int $fill_size Fill the array to the fixed size
+     *
+     * @return array|string
+     */
+    public function getDataRegexMatch(string $regex, $group = -1, int $fill_size = 0)
+    {
+        $is_matched = preg_match($regex, $this->stringDataIsWaitingToBeParsed, $matches);
+
+        if ($group >= 0) {
+            if ($is_matched) {
+                return $matches[$group];
+            } else {
+                return '';
+            }
+        } else {
+            if ($is_matched) {
+                if ($group !== null) {
+                    array_shift($matches);
+                }
+                return $matches;
+            } else {
+                return $fill_size > 0 ? array_fill(0, $fill_size, '') : [];
+            }
+        }
+    }
+
+    public function getDataRegexMatches(string $regex, int $flag): array
+    {
+        return preg_match_all($regex, $this->stringDataIsWaitingToBeParsed, $matches, $flag) ? $matches : [];
+    }
+
+    public function isExistInData(string $needle, int $offset = 0)
+    {
+        return strpos($this->stringDataIsWaitingToBeParsed, $needle, $offset) !== false;
     }
 
 }

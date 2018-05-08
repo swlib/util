@@ -13,12 +13,13 @@ use DOMDocument;
 /**
  * @method static array toJsonArray(string $var)
  * @method static object toJsonObject(string $var)
- * @method static string toJsonString(array|object $var)
+ * @method static string toJsonString(array | array $var)
  * @method static array toQueryArray(string $var)
  * @method static string toQueryString(array $var)
- * @method static SimpleXMLElement toXmlObject(string|array $var)
+ * @method static SimpleXMLElement toXmlObject(string | array $var, SimpleXMLElement $xml)
  * @method static string toXmlString(array $var)
- * @method static DOMDocument toHtmlObject(string $var)
+ * @method static DOMDocument toDomObject(string $var)
+ * @method static string toMultipartString(array $var, string $boundary)
  */
 class DataParser
 {
@@ -39,6 +40,12 @@ class DataParser
                     $callName = 'to' . $targetFormat . $targetType;
                     $callMap[$callName]['supports'][$fromType] = $subName;
                     $callMap[$callName]['returnTypes'][] = $subReturnType;
+                    $parameters = $method->getParameters();
+                    foreach ($parameters as $parameter) {
+                        $p_name = $parameter->getName();
+                        $p_type = $parameter->getType();
+                        $callMap[$callName]['parameters'][$p_name][] = $p_type;
+                    }
                 }
             }
         }
@@ -50,9 +57,13 @@ class DataParser
     {
         $comments = "/**\n";
         foreach (self::getCallableMap() as $method => $callInfo) {
-            $types = implode('|', array_keys($callInfo['supports']));
             $retTypes = implode('|', array_unique($callInfo['returnTypes']));
-            $comments .= " * @method static {$retTypes} {$method}({$types} \$var)\n";
+            $parameters = [];
+            foreach ($callInfo['parameters'] as $p_name => $p_types) {
+                $parameters[] = (($p_types = implode('|', $p_types)) ? "{$p_types} " : '') . "\${$p_name}";
+            }
+            $parameters = implode(', ', $parameters);
+            $comments .= " * @method static {$retTypes} {$method}($parameters)\n";
         }
         $comments .= '*/';
 
@@ -142,12 +153,25 @@ class DataParser
         return $xml;
     }
 
-    public static function stringToHtmlObject(string $var): DOMDocument
+    public static function stringToDomObject(string $var): DOMDocument
     {
         $html = new DOMDocument($var);
         $html->loadHTML($var);
 
         return $html;
+    }
+
+    public static function arrayToMultipartString(array $var, string $boundary): string
+    {
+        $ret = '';
+        foreach ($var as $name => $value) {
+            if (is_string($value)) {
+                $ret .= "$boundary\r\nContent-Disposition: form-data; name=\"$name\"\r\n\r\n$value\r\n";
+            }
+        }
+        $ret .= "$boundary\r\n";
+
+        return $ret;
     }
 
 }
