@@ -155,6 +155,7 @@ class DataParser
 
     public static function stringToDomObject(string $var): DOMDocument
     {
+        libxml_use_internal_errors(true);
         $html = new DOMDocument($var);
         $html->loadHTML($var);
 
