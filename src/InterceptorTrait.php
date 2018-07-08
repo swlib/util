@@ -67,11 +67,9 @@ trait InterceptorTrait
     {
         if (!empty($this->interceptors[$name])) {
             foreach ($this->interceptors[$name] as &$function) {
-                if (is_callable($function)) {
-                    $ret = $function(...$arguments);
-                    if ($ret !== null) {
-                        return $ret;
-                    }
+                $ret = Helper::call($function, ...$arguments);
+                if ($ret !== null) {
+                    return $ret;
                 }
             }
         }
