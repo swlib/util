@@ -34,7 +34,7 @@ class MapPool
             }
             $this->status_map[$key] = [
                 'max' => $max_size,
-                'existing' => 0
+                'created' => 0
             ];
             return true;
         }
@@ -46,7 +46,7 @@ class MapPool
         if (!$key) {
             throw new \InvalidArgumentException('Argument#2 $key can not be empty!');
         }
-        @$this->status_map[$key]['existing']++;
+        @$this->status_map[$key]['created']++;
     }
 
     public function get(string $key)
@@ -59,7 +59,7 @@ class MapPool
             $available = $this->resource_map[$key]->count() > 0;
         } else {
             // the resource available or over the max num, use pop or yield and waiting
-            $available = $this->resource_map[$key]->length() > 0 || $this->status_map[$key]['existing'] >= $this->status_map[$key]['max'];
+            $available = $this->resource_map[$key]->length() > 0 || $this->status_map[$key]['created'] >= $this->status_map[$key]['max'];
         }
         if ($available) {
             return $this->resource_map[$key]->pop();
@@ -81,7 +81,7 @@ class MapPool
         if (!isset($this->status_map[$key])) {
             return [
                 'max' => null,
-                'existing' => null,
+                'created' => null,
                 'in_queue' => null
             ];
         } else {
