@@ -166,11 +166,10 @@ class DataParser
     {
         $ret = '';
         foreach ($var as $name => $value) {
-            if (is_string($value)) {
-                $ret .= "$boundary\r\nContent-Disposition: form-data; name=\"$name\"\r\n\r\n$value\r\n";
-            }
+            $value = (string)$value;
+            $ret .= "--{$boundary}\r\nContent-Disposition: form-data; name=\"{$name}\"\r\n\r\n{$value}\r\n";
         }
-        $ret .= "$boundary\r\n";
+        $ret .= "--{$boundary}--\r\n";
 
         return $ret;
     }
