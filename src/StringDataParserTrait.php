@@ -104,13 +104,13 @@ trait StringDataParserTrait
      *
      * @return array|string
      */
-    public function getDataRegexMatch(string $regex, $group = -1, int $fill_size = 0)
+    public function getDataRegexMatch(string $regex, $group = null, int $fill_size = 0)
     {
         $is_matched = preg_match($regex, $this->stringDataIsWaitingToBeParsed, $matches);
 
-        if ($group >= 0) {
+        if ($group !== null && $group >= 0) {
             if ($is_matched) {
-                return $matches[$group];
+                return $matches[$group] ?? '';
             } else {
                 return '';
             }
@@ -119,9 +119,9 @@ trait StringDataParserTrait
                 if ($group !== null) {
                     array_shift($matches);
                 }
-                return $matches;
+                return $matches ?: [];
             } else {
-                return $fill_size > 0 ? array_fill(0, $fill_size, '') : [];
+                return $fill_size > 0 ? array_fill(0, $fill_size, '') : $matches;
             }
         }
     }
