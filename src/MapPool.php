@@ -34,7 +34,10 @@ class MapPool
             }
             $this->status_map[$key] = [
                 'max' => $max_size,
-                'created' => 0
+                'created' => 0,
+                'in_pool' => 0,
+                'reused' => 0,
+                'destroyed' => 0
             ];
             return true;
         }
@@ -46,7 +49,7 @@ class MapPool
         if (!$key) {
             throw new \InvalidArgumentException('Argument#2 $key can not be empty!');
         }
-        @$this->status_map[$key]['created']++;
+        $this->status_map[$key]['created']++;
     }
 
     public function get(string $key)
@@ -62,6 +65,7 @@ class MapPool
             $available = $this->resource_map[$key]->length() > 0 || $this->status_map[$key]['created'] >= $this->status_map[$key]['max'];
         }
         if ($available) {
+            $this->status_map[$key]['reused']++;
             return $this->resource_map[$key]->pop();
         } else {
             return null; // need create new one
@@ -76,19 +80,42 @@ class MapPool
         $this->resource_map[$key]->push($value);
     }
 
+    public function destroy($value, string $key = null)
+    {
+        if (!$key) {
+            throw new \InvalidArgumentException('Argument#2 $key can not be empty!');
+        }
+        $this->status_map[$key]['destroyed']++;
+    }
+
     public function getStatus(string $key): array
     {
         if (!isset($this->status_map[$key])) {
             return [
                 'max' => null,
                 'created' => null,
-                'in_queue' => null
+                'in_pool' => null,
+                'reused' => null,
+                'destroyed' => null
             ];
         } else {
             $pool = $this->resource_map[$key];
-            $in_queue = $pool instanceof \SplQueue ? $pool->count() : $pool->length();
-            $this->status_map[$key]['in_queue'] = $in_queue;
+            $in_pool = $pool instanceof \SplQueue ? $pool->count() : $pool->length();
+            $this->status_map[$key]['in_pool'] = $in_pool;
             return $this->status_map[$key];
+        }
+    }
+
+    public function getAllStatus(bool $full = false): array
+    {
+        if ($full) {
+            $ret = [];
+            foreach ($this->status_map as $key => $value) {
+                $ret[$key] = $this->getStatus($key);
+            }
+            return $ret;
+        } else {
+            return $this->status_map;
         }
     }
 
