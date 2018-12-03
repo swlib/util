@@ -66,7 +66,7 @@ class MapPool
         }
         if ($available) {
             $this->status_map[$key]['reused']++;
-            return $this->resource_map[$key]->pop();
+            return $this->resource_map[$key]->pop(); //TODO: timeout
         } else {
             return null; // need create new one
         }
