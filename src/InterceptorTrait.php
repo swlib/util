@@ -63,10 +63,10 @@ trait InterceptorTrait
      * @param array ...$arguments
      * @return mixed
      */
-    public function callInterceptor(string $name, &...$arguments)
+    public function callInterceptor(string $name, ...$arguments)
     {
         if (!empty($this->interceptors[$name])) {
-            foreach ($this->interceptors[$name] as &$function) {
+            foreach ($this->interceptors[$name] as $function) {
                 $ret = Helper::call($function, ...$arguments);
                 if ($ret !== null) {
                     return $ret;
