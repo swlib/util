@@ -7,6 +7,8 @@
 
 namespace Swlib\Util;
 
+use Exception;
+
 class Serialize
 {
 
@@ -30,7 +32,7 @@ class Serialize
         return $r;
     }
 
-    public static function exception(\Exception $exception): string
+    public static function exception(Exception $exception): string
     {
         $file = $exception->getFile();
         $line = $exception->getLine();

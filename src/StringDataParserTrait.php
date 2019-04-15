@@ -7,6 +7,10 @@
 
 namespace Swlib\Util;
 
+use DOMDocument;
+use InvalidArgumentException;
+use SimpleXMLElement;
+
 trait StringDataParserTrait
 {
 
@@ -18,7 +22,7 @@ trait StringDataParserTrait
     {
         if (isset($data)) {
             if (!is_string($data) && !(is_object($data) && method_exists($data, '__toString'))) {
-                throw new \InvalidArgumentException('Bind data must be string type or has toString method.');
+                throw new InvalidArgumentException('Bind data must be string type or has toString method.');
             }
         }
         if (is_object($data)) {
@@ -77,7 +81,7 @@ trait StringDataParserTrait
         }
     }
 
-    public function getParsedXmlObject(bool $reParse = false): \SimpleXMLElement
+    public function getParsedXmlObject(bool $reParse = false): SimpleXMLElement
     {
         if (isset($this->stringDataHasParsed['xml']) && !$reParse) {
             return $this->stringDataHasParsed['xml'];
@@ -87,7 +91,7 @@ trait StringDataParserTrait
         }
     }
 
-    public function getParsedDomObject(bool $reParse = false): \DOMDocument
+    public function getParsedDomObject(bool $reParse = false): DOMDocument
     {
         if (isset($this->stringDataHasParsed['html']) && !$reParse) {
             return $this->stringDataHasParsed['html'];

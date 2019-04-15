@@ -7,7 +7,9 @@
 
 namespace Swlib\Util;
 
-class ArrayMap extends \ArrayObject
+use ArrayObject;
+
+class ArrayMap extends ArrayObject
 {
 
     function get(string $path)

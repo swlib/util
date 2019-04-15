@@ -7,6 +7,9 @@
 
 namespace Swlib\Util;
 
+use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionMethod;
 use SimpleXMLElement;
 use DOMDocument;
 
@@ -27,15 +30,15 @@ class DataParser
     {
         static $callMap;
         if (!isset($callMap)) {
-            $reflection = new \ReflectionClass(self::class);
-            $methods = $reflection->getMethods(\ReflectionMethod::IS_STATIC);
+            $reflection = new ReflectionClass(self::class);
+            $methods = $reflection->getMethods(ReflectionMethod::IS_STATIC);
             foreach ($methods as $method) {
                 if (preg_match('/([a-z]+)To([A-Z][a-z]+)([A-Z][a-z]+)/', $methodName = $method->getName(), $matches)) {
                     $targetFormat = $matches[2];
                     $targetType = $matches[3];
                     $fromType = $matches[1];
                     $subName = '\\' . self::class . '::' . $methodName;
-                    $sub = new \ReflectionMethod($subName);
+                    $sub = new ReflectionMethod($subName);
                     $subReturnType = $sub->getReturnType();
                     $callName = 'to' . $targetFormat . $targetType;
                     $callMap[$callName]['supports'][$fromType] = $subName;
@@ -74,7 +77,7 @@ class DataParser
     {
         $var = $arguments[0] ?? null;
         if ($var === null) {
-            throw new \InvalidArgumentException("Argument can't be null!");
+            throw new InvalidArgumentException("Argument can't be null!");
         } else {
             $callMap = self::getCallableMap();
             if (TypeDetector::canBeArray($var) && isset($callMap[$name]['supports']['array'])) {
@@ -86,7 +89,7 @@ class DataParser
             }
         }
 
-        throw new \InvalidArgumentException(
+        throw new InvalidArgumentException(
             'Not implement for ' . (is_object($var) ? get_class($var) : gettype($var)) . " $name"
         );
     }

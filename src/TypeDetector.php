@@ -7,12 +7,15 @@
 
 namespace Swlib\Util;
 
+use ArrayAccess;
+use Iterator;
+
 class TypeDetector
 {
 
     public static function canBeArray($var): bool
     {
-        return is_array($var) || (is_object($var) && $var instanceof \ArrayAccess);
+        return is_array($var) || (is_object($var) && $var instanceof ArrayAccess);
     }
 
     public static function canBeString($var): bool
@@ -27,7 +30,7 @@ class TypeDetector
 
     public static function isIterable($var): bool
     {
-        return is_array($var) || (is_object($var) && $var instanceof \Iterator);
+        return is_array($var) || (is_object($var) && $var instanceof Iterator);
     }
 
 }

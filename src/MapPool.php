@@ -7,6 +7,8 @@
 
 namespace Swlib\Util;
 
+use InvalidArgumentException;
+use SplQueue;
 use Swoole\Coroutine\Channel;
 
 /**
@@ -19,7 +21,7 @@ class MapPool
 
     use SingletonTrait;
 
-    /** @var Channel[]|\SplQueue[] */
+    /** @var Channel[]|SplQueue[] */
     protected $resource_map = [];
     /** @var [][] */
     protected $status_map = [];
@@ -28,7 +30,7 @@ class MapPool
     {
         if (!isset($this->resource_map[$key])) {
             if ($max_size < 0) {
-                $this->resource_map[$key] = new \SplQueue();
+                $this->resource_map[$key] = new SplQueue();
             } else {
                 $this->resource_map[$key] = new Channel($max_size);
             }
@@ -47,7 +49,7 @@ class MapPool
     public function create(array $options, string $key = null)
     {
         if (!$key) {
-            throw new \InvalidArgumentException('Argument#2 $key can not be empty!');
+            throw new InvalidArgumentException('Argument#2 $key can not be empty!');
         }
         $this->status_map[$key]['created']++;
     }
@@ -58,7 +60,7 @@ class MapPool
             $this->init($key);
         }
         $pool = $this->resource_map[$key];
-        if ($pool instanceof \SplQueue) {
+        if ($pool instanceof SplQueue) {
             $available = $this->resource_map[$key]->count() > 0;
         } else {
             // the resource available or over the max num, use pop or yield and waiting
@@ -75,7 +77,7 @@ class MapPool
     public function put($value, string $key = null)
     {
         if (!$key) {
-            throw new \InvalidArgumentException('Argument#2 $key can not be empty!');
+            throw new InvalidArgumentException('Argument#2 $key can not be empty!');
         }
         $this->resource_map[$key]->push($value);
     }
@@ -83,7 +85,7 @@ class MapPool
     public function destroy($value, string $key = null)
     {
         if (!$key) {
-            throw new \InvalidArgumentException('Argument#2 $key can not be empty!');
+            throw new InvalidArgumentException('Argument#2 $key can not be empty!');
         }
         $this->status_map[$key]['destroyed']++;
     }
@@ -100,7 +102,7 @@ class MapPool
             ];
         } else {
             $pool = $this->resource_map[$key];
-            $in_pool = $pool instanceof \SplQueue ? $pool->count() : $pool->length();
+            $in_pool = $pool instanceof SplQueue ? $pool->count() : $pool->length();
             $this->status_map[$key]['in_pool'] = $in_pool;
             return $this->status_map[$key];
         }
@@ -139,7 +141,7 @@ class MapPool
             $this->status_map[$key]['max'] = $max_size;
             if ($max_size > $current_max || $max_size < 0) { // expend or unlimited
                 if ($max_size < 0) { // chan to queue
-                    $new_pool = new \SplQueue();
+                    $new_pool = new SplQueue();
                 } else {
                     $new_pool = new Channel($max_size);
                 }
