@@ -6,7 +6,7 @@
 
 namespace Swlib\Util;
 
-trait Singleton
+trait SingletonTrait
 {
     private static $instance;
 
