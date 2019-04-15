@@ -39,7 +39,7 @@ class Serialize
         $code = $exception->getCode();
         $msg = $exception->getMessage();
         $trace = $exception->getTraceAsString();
-        $r = "Catch Exception: [{$code}] {$msg} in {$file} on line {$line}\n" .
+        $r = "Exception: [{$code}] {$msg} in {$file} on line {$line}\n" .
             "Stack trace: " . $trace . "\n";
 
         return $r;
