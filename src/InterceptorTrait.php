@@ -7,36 +7,55 @@
 
 namespace Swlib\Util;
 
+use InvalidArgumentException;
+
 trait InterceptorTrait
 {
 
     /**@var callable[][] */
     public $interceptors = [];
 
+    protected static function filterInterceptor($interceptor): array
+    {
+        if (TypeDetector::canBeCalled($interceptor)) {
+            return [$interceptor];
+        } elseif (is_array($interceptor)) {
+            foreach ($interceptor as $_interceptor) {
+                if (!TypeDetector::canBeCalled($_interceptor)) {
+                    goto _error;
+                }
+            }
+            return $interceptor;
+        } else {
+            _error:
+            throw new InvalidArgumentException('invalid interceptor');
+        }
+    }
+
     /**
      * Add an interceptor
      *
      * @param string $name
-     * @param callable[] $interceptor
+     * @param callable|callable[] $interceptor
      */
-    public function withInterceptor(string $name, array $interceptor)
+    public function withInterceptor(string $name, $interceptor)
     {
-        $this->interceptors[$name] = $interceptor;
+        $this->interceptors[$name] = static::filterInterceptor($interceptor);
     }
 
     /**
      * Add a function to the interceptor
      *
      * @param string $name
-     * @param callable|array $functions
+     * @param callable|callable[] $interceptor
      * @return self|$this
      */
-    public function withAddedInterceptor(string $name, array $functions): self
+    public function withAddedInterceptor(string $name, array $interceptor): self
     {
         if (!isset($this->interceptors[$name])) {
             $this->interceptors[$name] = [];
         }
-        $this->interceptors[$name] = array_merge($this->interceptors[$name], $functions);
+        $this->interceptors[$name] = array_merge($this->interceptors[$name], static::filterInterceptor($interceptor));
 
         return $this;
     }
@@ -47,7 +66,7 @@ trait InterceptorTrait
      * @param string $name
      * @return self|$this
      */
-    public function removeInterceptor(string $name): self
+    public function withoutInterceptor(string $name): self
     {
         if (isset($this->interceptors[$name])) {
             unset($this->interceptors[$name]);
