@@ -95,22 +95,24 @@ class DataParser
 
     public static function stringToJsonArray(string $var): array
     {
-        return ($var = json_decode($var, true)) === false ? [] : $var;
+        return (array)json_decode($var, true);
     }
 
     public static function stringToJsonObject(string $var): object
     {
-        return ($var = json_decode($var)) === false ? (object)[] : (object)$var;
+        return (object)json_decode($var);
     }
 
     public static function arrayToJsonString(array $var): string
     {
-        return ($var = json_encode($var)) === false ? '{}' : $var;
+        $var = json_encode($var);
+        return ($var !== false && $var !== null) ? $var : '{}';
     }
 
     public static function objectToJsonString(array $var): string
     {
-        return ($var = json_encode($var)) === false ? '{}' : $var;
+        $var = json_encode($var);
+        return ($var !== false && $var !== null) ? $var : '{}';
     }
 
     public static function stringToQueryArray(string $var): array
@@ -132,7 +134,7 @@ class DataParser
 
     public static function arrayToXmlString(array $var): string
     {
-        return self::arrayToXmlObject($var)->asXML();
+        return self::arrayToXmlObject($var)->asXML() ?: '';
     }
 
     public static function arrayToXmlObject(array $var, ?SimpleXMLElement &$xml = null): SimpleXMLElement

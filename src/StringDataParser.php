@@ -100,6 +100,11 @@ trait StringDataParser
         }
     }
 
+    public function getDataContain(string $needle, int $offset = 0): bool
+    {
+        return strpos($this->stringDataIsWaitingToBeParsed, $needle, $offset) !== false;
+    }
+
     /**
      * @param string $regex
      * @param int|string $group
@@ -132,10 +137,5 @@ trait StringDataParser
     public function getDataRegexMatches(string $regex, int $flag): array
     {
         return preg_match_all($regex, $this->stringDataIsWaitingToBeParsed, $matches, $flag) ? $matches : [];
-    }
-
-    public function isExistInData(string $needle, int $offset = 0)
-    {
-        return strpos($this->stringDataIsWaitingToBeParsed, $needle, $offset) !== false;
     }
 }
