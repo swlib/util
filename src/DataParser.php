@@ -78,15 +78,14 @@ class DataParser
         $var = $arguments[0] ?? null;
         if ($var === null) {
             throw new InvalidArgumentException("Argument can't be null!");
-        } else {
-            $callMap = self::getCallableMap();
-            if (TypeDetector::canBeArray($var) && isset($callMap[$name]['supports']['array'])) {
-                return call_user_func($callMap[$name]['supports']['array'], $var);
-            } elseif (TypeDetector::canBeString($var) && isset($callMap[$name]['supports']['string'])) {
-                return call_user_func($callMap[$name]['supports']['array'], $var);
-            } elseif (is_object($var) && isset($callMap[$name]['supports']['object'])) {
-                return call_user_func($callMap[$name]['supports']['object'], $var);
-            }
+        }
+        $callMap = static::getCallableMap();
+        if (TypeDetector::canBeArray($var) && isset($callMap[$name]['supports']['array'])) {
+            return $callMap[$name]['supports']['array']($var);
+        } elseif (TypeDetector::canBeString($var) && isset($callMap[$name]['supports']['string'])) {
+            return $callMap[$name]['supports']['string']($var);
+        } elseif (is_object($var) && isset($callMap[$name]['supports']['object'])) {
+            return $callMap[$name]['supports']['object']($var);
         }
 
         throw new InvalidArgumentException(

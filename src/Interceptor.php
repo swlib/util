@@ -49,12 +49,12 @@ trait Interceptor
      * @param callable|callable[] $interceptor
      * @return self|$this
      */
-    public function withAddedInterceptor(string $name, array $interceptor): self
+    public function withAddedInterceptor(string $name, $interceptor): self
     {
-        if (!isset($this->interceptors[$name])) {
-            $this->interceptors[$name] = [];
-        }
-        $this->interceptors[$name] = array_merge($this->interceptors[$name], static::filterInterceptor($interceptor));
+        $this->interceptors[$name] = array_merge(
+            $this->interceptors[$name] ?? [],
+            static::filterInterceptor($interceptor)
+        );
 
         return $this;
     }
@@ -67,9 +67,7 @@ trait Interceptor
      */
     public function withoutInterceptor(string $name): self
     {
-        if (isset($this->interceptors[$name])) {
-            unset($this->interceptors[$name]);
-        }
+        unset($this->interceptors[$name]);
 
         return $this;
     }
