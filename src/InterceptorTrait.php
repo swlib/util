@@ -11,7 +11,6 @@ use InvalidArgumentException;
 
 trait InterceptorTrait
 {
-
     /**@var callable[][] */
     public $interceptors = [];
 
@@ -95,5 +94,4 @@ trait InterceptorTrait
 
         return null;
     }
-
 }

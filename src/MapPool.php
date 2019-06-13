@@ -18,7 +18,6 @@ use Swoole\Coroutine\Channel;
  */
 class MapPool
 {
-
     use SingletonTrait;
 
     /** @var Channel[]|SplQueue[] */

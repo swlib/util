@@ -9,7 +9,6 @@ namespace Swlib\Util;
 
 trait SpecialMarkTrait
 {
-
     /** @var $special_marks array "mark/remark" */
     public $special_marks = ['default' => null];
 
@@ -36,5 +35,4 @@ trait SpecialMarkTrait
 
         return $this;
     }
-
 }

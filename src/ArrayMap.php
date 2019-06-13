@@ -11,7 +11,6 @@ use ArrayObject;
 
 class ArrayMap extends ArrayObject
 {
-
     function get(string $path)
     {
         $path = explode(".", $path);
@@ -204,5 +203,4 @@ class ArrayMap extends ArrayObject
     {
         return json_encode($this, JSON_UNESCAPED_UNICODE, JSON_UNESCAPED_SLASHES);
     }
-
 }

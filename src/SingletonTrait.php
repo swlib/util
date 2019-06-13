@@ -18,5 +18,4 @@ trait SingletonTrait
         }
         return self::$instance;
     }
-
 }

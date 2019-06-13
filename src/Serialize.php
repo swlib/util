@@ -11,7 +11,6 @@ use Exception;
 
 class Serialize
 {
-
     public static function trace($traces): string
     {
         $default_trace = [
@@ -44,5 +43,4 @@ class Serialize
 
         return $r;
     }
-
 }

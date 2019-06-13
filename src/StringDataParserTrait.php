@@ -13,7 +13,6 @@ use SimpleXMLElement;
 
 trait StringDataParserTrait
 {
-
     private $stringDataIsWaitingToBeParsed;
     private $stringDataHasParsed = [];
 
@@ -139,5 +138,4 @@ trait StringDataParserTrait
     {
         return strpos($this->stringDataIsWaitingToBeParsed, $needle, $offset) !== false;
     }
-
 }

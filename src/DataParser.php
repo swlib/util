@@ -176,5 +176,4 @@ class DataParser
 
         return $ret;
     }
-
 }

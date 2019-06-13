@@ -15,7 +15,6 @@ use function is_string;
 
 class Helper
 {
-
     public static function call($callable, ...$arguments)
     {
         if (is_object($callable) || (is_string($callable) && function_exists($callable))) {
@@ -27,5 +26,4 @@ class Helper
             throw new InvalidArgumentException('Call failed!');
         }
     }
-
 }
