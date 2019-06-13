@@ -11,7 +11,7 @@ use DOMDocument;
 use InvalidArgumentException;
 use SimpleXMLElement;
 
-trait StringDataParserTrait
+trait StringDataParser
 {
     private $stringDataIsWaitingToBeParsed;
     private $stringDataHasParsed = [];

@@ -9,7 +9,7 @@ namespace Swlib\Util;
 
 use InvalidArgumentException;
 
-trait InterceptorTrait
+trait Interceptor
 {
     /**@var callable[][] */
     public $interceptors = [];

@@ -7,7 +7,7 @@
 
 namespace Swlib\Util;
 
-trait SpecialMarkTrait
+trait SpecialMark
 {
     /** @var $special_marks array "mark/remark" */
     public $special_marks = ['default' => null];
