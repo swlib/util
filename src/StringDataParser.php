@@ -13,11 +13,10 @@ use SimpleXMLElement;
 
 trait StringDataParser
 {
-    private $stringDataIsWaitingToBeParsed;
-    private $stringDataHasParsed = [];
+    protected $stringDataIsWaitingToBeParsed;
+    protected $stringDataHasParsed = [];
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function __stringDataParserInitialization(&$data)
+    protected function __constructStringDataParser(&$data)
     {
         if (isset($data)) {
             if (!is_string($data) && !(is_object($data) && method_exists($data, '__toString'))) {

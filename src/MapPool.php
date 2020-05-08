@@ -29,7 +29,7 @@ class MapPool
     {
         if (!isset($this->resource_map[$key])) {
             if ($max_size < 0) {
-                $this->resource_map[$key] = new SplQueue();
+                $this->resource_map[$key] = new SplQueue;
             } else {
                 $this->resource_map[$key] = new Channel($max_size);
             }
@@ -140,7 +140,7 @@ class MapPool
             $this->status_map[$key]['max'] = $max_size;
             if ($max_size > $current_max || $max_size < 0) { // expend or unlimited
                 if ($max_size < 0) { // chan to queue
-                    $new_pool = new SplQueue();
+                    $new_pool = new SplQueue;
                 } else {
                     $new_pool = new Channel($max_size);
                 }
