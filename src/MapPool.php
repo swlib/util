@@ -18,7 +18,7 @@ use Swoole\Coroutine\Channel;
  */
 class MapPool
 {
-    use Singleton;
+    use SingletonTrait;
 
     /** @var Channel[]|SplQueue[] */
     protected $resource_map = [];
