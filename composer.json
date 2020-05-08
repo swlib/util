@@ -26,14 +26,7 @@
       "Swlib\\Util\\": "src"
     }
   },
-  "repositories": {
-    "packagist": {
-      "type": "composer",
-      "url": "https://packagist.laravel-china.org/"
-    }
-  },
   "require-dev": {
-    "eaglewu/swoole-ide-helper": "dev-master",
     "phpunit/phpunit": "~7"
   },
   "config": {
