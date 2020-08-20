@@ -81,7 +81,7 @@ class DataParser
         }
         $callMap = static::getCallableMap();
         if (TypeDetector::canBeArray($var) && isset($callMap[$name]['supports']['array'])) {
-            return $callMap[$name]['supports']['array']($var);
+            return $callMap[$name]['supports']['array'](...$arguments);
         } elseif (TypeDetector::canBeString($var) && isset($callMap[$name]['supports']['string'])) {
             return $callMap[$name]['supports']['string']($var);
         } elseif (is_object($var) && isset($callMap[$name]['supports']['object'])) {
