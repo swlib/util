@@ -23,6 +23,7 @@ use DOMDocument;
  * @method static string toXmlString(array $var)
  * @method static DOMDocument toDomObject(string $var)
  * @method static string toMultipartString(array $var, string $boundary)
+ * @method static array toXmlArray(string $xml)
  */
 class DataParser
 {
@@ -176,5 +177,13 @@ class DataParser
         $ret .= "--{$boundary}--\r\n";
 
         return $ret;
+    }
+
+    public static function stringToXmlArray(string $xml): array
+    {
+        libxml_disable_entity_loader(true);
+        $xmlstring = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
+        $array = json_decode(json_encode($xmlstring), true);
+        return $array;
     }
 }
