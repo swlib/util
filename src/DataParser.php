@@ -183,7 +183,7 @@ class DataParser
     {
         libxml_disable_entity_loader(true);
         $xmlstring = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
-        $array = json_decode(json_encode($xmlstring), true);
-        return $array;
+
+        return json_decode(json_encode($xmlstring), true);
     }
 }
